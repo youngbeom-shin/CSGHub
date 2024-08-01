@@ -2,13 +2,21 @@ module SessionsHelper
   def log_in user
     session[:login_identity] = user.login_identity
     cookies[:login_identity] = user.login_identity
-    cookies[:user_synced] = user.starhub_synced
-    setup_jwt_token(user.name) if user.starhub_synced?
+    cookies[:current_user] = user.name
+    cookies[:admin_user] = 'true' if user.admin?
+
+    # need to add later
+    # cookies[:avatar] = user.avatar
+    # cookies[:roles] = user.roles
+
+    # cookies[:user_synced] = user.starhub_synced
+    # setup_jwt_token(user.name) if user.starhub_synced?
     user.update_column('session_ip', request.remote_ip)
   end
 
   def current_user
-    @current_user ||= User.find_by_login_identity(session[:login_identity].presence)
+    login_identity = session[:login_identity].presence
+    @current_user ||= login_identity && User.find_by_login_identity(login_identity)
   end
 
   def logged_in?
@@ -24,14 +32,21 @@ module SessionsHelper
   end
 
   def logout
+    # unset current_user
     session[:login_identity] = nil
+    cookies.delete :current_user
+    cookies.delete :login_identity
+    cookies.delete :user_token
+    cookies.delete :token_expire_at
+    cookies.delete :admin_user
+
+    # unset odic cookies
     cookies.delete :oidcUuid
     cookies.delete :idToken
     cookies.delete :userinfos
-    cookies.delete :login_identity
+
+    # unset starhub synced
     cookies.delete :user_synced
-    cookies.delete :user_token
-    cookies.delete :token_expire_at
   end
 
   def is_on_premise?

@@ -39,6 +39,15 @@ class ApplicationController < ActionController::Base
     redirect_to root_path
   end
 
+  def authenticate_admin_user
+    unless helpers.logged_in?
+      return redirect_to login_path
+    end
+    unless current_user.admin?
+      return redirect_to errors_unauthorized_path
+    end
+  end
+
   def check_user_login
     return if helpers.logged_in?
     if helpers.logged_in_other_system?
@@ -73,6 +82,30 @@ class ApplicationController < ActionController::Base
                      end
     I18n.locale = params[:locale] || cookies[:locale] || default_locale
     cookies[:locale] = I18n.locale
+  end
+
+  # 通过独立的用户服务，这种模式下，只考虑通过用户的 uuid 来判断用户是否存在
+  def login_by_server_user_infos user_infos
+    user = User.find_or_create_by(login_identity: user_infos['uuid']) do |u|
+      u.avatar = user_infos['avatar']
+      u.name = user_infos['username']
+      u.nickname = user_infos['nickname']
+      u.phone = user_infos['phone']
+      u.email = user_infos['email']
+      u.roles = user_infos['roles']
+    end
+
+    user.roles = user_infos['roles'] if user_infos['roles'].present?
+    user.avatar = user_infos['avatar'] if user_infos['avatar'].present?
+    user.name = user_infos['username'] if user_infos['username'].present?
+    user.nickname = user_infos['nickname'] if user_infos['nickname'].present?
+    user.phone = user_infos['phone'] if user_infos['phone'].present?
+    user.email = user_infos['email'] if user_infos['email'].present?
+    user.save
+
+    helpers.log_in user.reload
+    redirect_path = session.delete(:original_request_path) || root_path
+    redirect_to redirect_path
   end
 
   def login_by_user_infos user_infos
@@ -119,14 +152,14 @@ class ApplicationController < ActionController::Base
   def check_user_info_integrity
     return if !helpers.logged_in?
 
-    if current_user.email.blank?
-      flash[:alert] = "请补充邮箱，以便能使用完整的功能"
-      return redirect_to '/settings/profile'
-    end
+    # if current_user.email.blank?
+    #   flash[:alert] = "请补充邮箱，以便能使用完整的功能"
+    #   return redirect_to '/settings/profile'
+    # end
 
-    unless current_user.starhub_synced?
-      current_user.sync_to_starhub_server
-    end
+    # unless current_user.starhub_synced?
+    #   current_user.sync_to_starhub_server
+    # end
   end
 
   def relative_path_to_resolve_path type, content

@@ -52,11 +52,20 @@
       </p>
     </div>
   </div>
+
+  <EndpointPlayground
+    v-if="appStatus === 'Running'"
+    :appEndpoint="appEndpoint"
+    :model-id="modelId"
+  />
 </template>
 
 <script setup>
+  import EndpointPlayground from './EndpointPlayground.vue'
+
   const props = defineProps({
     appEndpoint: String,
+    appStatus: String,
     hardware: String,
     modelId: String,
     private: String,

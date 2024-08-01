@@ -25,6 +25,7 @@ export const all = {
   loadError: "Load Error",
   notSupportPreview:
     "Preview is not supported at the moment, please download via git clone",
+  syncNotSupportPreview: "Preview is not supported at the moment",
   changeVis: "Change visibility to ",
   enterPls: "Enter Please",
   sureDel: "Sure to Del",
@@ -44,6 +45,7 @@ export const all = {
   changeCancel: "Operation canceled",
   addSuccess: "Added successfully",
   delSuccess: "Del successfully",
+  updateSuccess: "Update successfully",
   lastTime: "Last Updated",
   downloadCount: "Download",
   public: "Public",
@@ -78,5 +80,11 @@ export const all = {
   deleteSuccess: "Successfully delete",
   commits: "commit history",
   fetchError: "Failed to fetch data",
-  deploy: "Deploy"
+  deploy: "Deploy",
+  more:"More",
+  baseModel:"Base Model",
+  moreDesc: "Expand more",
+  sdkTips: "Please register first and then obtain the Token from OpenCSG's account page",
+  public: "Public",
+  private: "Private",
 }

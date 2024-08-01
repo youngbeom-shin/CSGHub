@@ -2,17 +2,36 @@
   <a :href="detailLink"
      :class="`${repoType}-card  hover:active-${repoType}-card `"
      class="focus:outline focus:outline-4 focus:outline-[#EAECF0] hover:shadow-md p-4 mlg:w-full border border-gray-200 rounded-xl"
+     :style="isCollection ? 'width:100%' : ''"
   >
-    <div class="flex items-center mb-[5px] w-[399px] lg:w-[370px] mlg:w-full">
+    <div class="flex items-center justify-between mb-[5px] w-[399px] lg:w-full">
       <div :class="`${repoType}-path`"
            class="text-sm text-[#303133] font-medium text-ellipsis overflow-hidden whitespace-nowrap"
       >
         {{ getComputed.path }}
       </div>
+      <div class="flex gap-1">
+        <el-tooltip
+          effect="light"
+          :content="$t('repo.source.needSync')"
+          placement="top"
+        >
+          <SvgIcon v-if="!!needSyncIcon" :name="needSyncIcon" />
+        </el-tooltip>
+        <el-tooltip
+          effect="light"
+          :content="syncTooltip"
+          placement="top"
+        >
+          <SvgIcon v-if="!!sourceIcon && !needSyncIcon" :name="sourceIcon" />
+        </el-tooltip>
+      </div>
     </div>
 
     <p v-if="getComputed.showDescription"
-      class="w-[390px] lg:w-[370px] mlg:w-full h-[35px] leading-[18px] mb-[5px] text-[#909399] text-xs overflow-hidden text-ellipsis line-clamp-2 text-left">
+      class="w-[390px] lg:w-[370px] mlg:w-full h-[35px] leading-[18px] mb-[5px] text-[#909399] text-xs overflow-hidden text-ellipsis line-clamp-2 text-left"
+      :class="isCollection ? 'hidden' : ''"
+     >
       {{ repo.description }}
     </p>
 
@@ -49,6 +68,7 @@
   const props = defineProps({
     repo: Object,
     repoType: String,
+    isCollection: Boolean,
     cardType: {
       type: String,
       default: 'index'
@@ -70,6 +90,31 @@
       default:
         return ''
     }
+  })
+
+  const sourceIcon = computed(() => {
+    if (props.repo.source !== 'opencsg') return ''
+    
+    return props.repo.sync_status === 'completed' 
+      ? 'repo_opencsg_completed' 
+      : 'repo_opencsg_sync'
+  })
+
+  const needSyncIcon = computed(() => {
+    if (props.repo.source !== 'opencsg') return ''
+
+    return props.repo.sync_status !== 'completed'
+      && !!props.repo.repository.http_clone_url
+      ? 'repo_opencsg_need_sync'
+      : ''
+  })
+
+  const syncTooltip = computed(() => {
+    if (props.repo.source !== 'opencsg') return ''
+
+    return props.repo.sync_status === 'completed'
+      ? t('repo.source.syncCompleted')
+      : t('repo.source.remoteResource')
   })
 
   const getComputed = computed(() => {

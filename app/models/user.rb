@@ -9,13 +9,12 @@ class User < ApplicationRecord
 
   SUPER_USERS = ENV.fetch('SUPER_USERS', []).split(',')
 
-  validates_uniqueness_of :name, :phone, :email, allow_blank: true, on: :create
-  validates_length_of :nickname, maximum: 20
-  validates_length_of :email, maximum: 30
-  validates :name, format: { with: NAME_RULE }, allow_blank: true
-  validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
-
-  validate :unique_name_by_organization
+  # validates_uniqueness_of :name, :phone, :email, allow_blank: true, on: :create
+  # validates_length_of :nickname, maximum: 20
+  # validates_length_of :email, maximum: 30
+  # validates :name, format: { with: NAME_RULE }, allow_blank: true
+  # validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
+  # validate :unique_name_by_organization
 
   has_many :org_memberships, dependent: :destroy
   has_many :organizations, through: :org_memberships
@@ -34,12 +33,12 @@ class User < ApplicationRecord
   has_many :created_application_spaces, class_name: 'ApplicationSpace', foreign_key: :creator_id
   has_many :created_endpoints, class_name: 'Endpoint', foreign_key: :creator_id
 
-  after_save :sync_to_starhub_server
+  # after_save :sync_to_starhub_server
 
   # user.roles = "super_user"
   # user.roles = ["super_user", "admin"]
   def roles=(*roles)
-    roles = [*roles].flatten.map { |r| r.to_sym }
+    roles = [*roles].flatten.compact.map { |r| r.to_sym }
     self.roles_mask = (roles & ROLES).map { |r| 2**ROLES.index(r) }.inject(0, :+)
   end
 
@@ -151,10 +150,10 @@ class User < ApplicationRecord
     Starhub.api(session_ip).image_secure_check('profilePhotoCheck', bucket_name, avatar) if avatar.to_s.match(/^avatar\/*/)
 
     if starhub_synced?
-      res = Starhub.api(session_ip).update_user(name, nickname, email)
+      res = Starhub.api(session_ip).update_user(name, nickname, phone, email, login_identity)
       raise StarhubError, res.body unless res.success?
     else
-      res = Starhub.api(session_ip).create_user(name, nickname, email)
+      res = Starhub.api(session_ip).create_user(name, nickname, phone, email, login_identity)
       raise StarhubError, res.body unless res.success?
       starhub_synced!
     end
@@ -175,7 +174,9 @@ class User < ApplicationRecord
       email: email,
       phone: phone,
       avatar: avatar_url,
+      role: roles,
       last_login_at: last_login_at,
+      created_at: created_at
     }
   end
 

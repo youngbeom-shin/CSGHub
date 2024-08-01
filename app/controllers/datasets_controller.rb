@@ -6,16 +6,15 @@ class DatasetsController < ApplicationController
   include BlobContentHelper
 
   before_action :check_user_info_integrity
-  before_action :authenticate_user, only: [:new_file, :upload_file, :edit_file]
-  before_action :load_branch_and_path, only: [:files, :blob, :new_file, :upload_file, :resolve, :edit_file]
-  before_action :load_dataset_detail, only: [:show, :files, :blob, :new_file, :upload_file, :edit_file, :community, :settings, :commits, :commit]
+  before_action :authenticate_user, only: [:new, :new_file, :upload_file, :edit_file, :settings]
+  before_action :load_branch_and_path, except: [:index, :new]
+  before_action :load_dataset_detail, except: [:index, :new, :resolve]
 
   def index
     get_tag_list('datasets')
   end
 
   def new
-    @available_namespaces = current_user.available_namespaces
     get_license_list
   end
 
@@ -44,42 +43,7 @@ class DatasetsController < ApplicationController
   end
 
   def resolve
-    if params[:download] == 'true'
-      if params[:lfs] == 'true'
-        file_url = csghub_api.download_dataset_file(params[:namespace],
-                                                      params[:dataset_name],
-                                                      params[:lfs_path],
-                                                      { ref: @current_branch,
-                                                        lfs: true,
-                                                        save_as: @current_path,
-                                                        current_user: current_user&.name })
-        redirect_to JSON.parse(file_url)['data'], allow_other_host: true
-      else
-        file = csghub_api.download_dataset_file(params[:namespace],
-                                                  params[:dataset_name],
-                                                  @current_path,
-                                                  { ref: @current_branch,
-                                                    current_user: current_user&.name })
-        send_data file, filename: @current_path
-      end
-    else
-      content_type = helpers.content_type_format_mapping[params[:format]] || 'text/plain'
-      if ['jpg', 'png', 'jpeg', 'gif', 'svg'].include? params[:format]
-        result = csghub_api.download_dataset_resolve_file(params[:namespace],
-                                                            params[:dataset_name],
-                                                            @current_path,
-                                                            { ref: @current_branch,
-                                                              current_user: current_user&.name })
-        send_data result, type: content_type, disposition: 'inline'
-      else
-        result = csghub_api.get_dataset_file_content(params[:namespace],
-                                                      params[:dataset_name],
-                                                      @current_path,
-                                                      { ref: @current_branch,
-                                                        current_user: current_user&.name })
-        render plain: JSON.parse(result)['data']
-      end
-    end
+    resolve_file_or_content(:download_dataset_resolve_file, :get_dataset_file_content, :dataset_name)
   end
 
   def upload_file
@@ -111,16 +75,7 @@ class DatasetsController < ApplicationController
   private
 
   def load_dataset_detail
-    return if action_name == 'blob' && params[:download] == 'true'
-
-    if action_name == 'blob' || action_name == 'edit_file'
-      @dataset, @last_commit, @branches, @blob = csghub_api.get_dataset_detail_blob_data_in_parallel(params[:namespace], params[:dataset_name], files_options)
-      update_blob_content('dataset')
-    else
-      @dataset, @branches = csghub_api.get_dataset_detail_data_in_parallel(params[:namespace], params[:dataset_name], files_options)
-    end
     @tags_list = Tag.where(scope: 'dataset', tag_type: 'task').as_json
-    @tags = Tag.build_detail_tags(JSON.parse(@dataset)['data']['tags'], 'dataset').to_json
-    @settings_visibility = current_user ? current_user.can_manage?(@local_dataset) : false
+    @settings_visibility = (current_user && @local_dataset) ? current_user.can_manage?(@local_dataset) : false
   end
 end

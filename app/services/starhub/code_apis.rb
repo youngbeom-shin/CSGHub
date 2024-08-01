@@ -12,10 +12,6 @@ module Starhub
       get_repo_detail_blob_data_in_parallel('codes', namespace, code_name, options)
     end
 
-    def get_codes(current_user, keyword, sort_by, task_tag, framework_tag, language_tag, license_tag, page = 1, per = 16)
-      get_repos('codes', current_user, keyword, sort_by, task_tag, framework_tag, language_tag, license_tag, page, per)
-    end
-
     def get_code_detail(namespace, code_name, options = {})
       get_repo_detail('codes', namespace, code_name, options)
     end
@@ -40,10 +36,6 @@ module Starhub
       create_repo('codes', username, code_name, namespace, nickname, desc, options)
     end
 
-    def delete_code(namespace, code_name, params = {})
-      delete_repo('codes', namespace, code_name, params)
-    end
-
     def update_code(username, code_name, namespace, nickname, desc, options = {})
       update_repo('codes', username, code_name, namespace, nickname, desc, options)
     end
@@ -52,24 +44,12 @@ module Starhub
       get_repo_tags('codes', namespace, code_name, options)
     end
 
-    def download_code_file(namespace, code_name, path, options = {})
-      download_repo_file('codes', namespace, code_name, path, options)
-    end
-
     def download_code_resolve_file(namespace, code_name, path, options = {})
       download_repo_resolve_file('codes', namespace, code_name, path, options)
     end
 
-    def create_code_file(namespace, code_name, path, options = {})
-      create_repo_file('codes', namespace, code_name, path, options)
-    end
-
     def update_code_file(namespace, code_name, path, options = {})
       update_repo_file('codes', namespace, code_name, path, options)
-    end
-
-    def upload_code_file(namespace, code_name, options = {})
-      upload_repo_file('codes', namespace, code_name, options)
     end
 
     def code_related_repos(namespace, code_name, options = {})

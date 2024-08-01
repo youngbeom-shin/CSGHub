@@ -52,6 +52,7 @@ export const application_spaces = {
     subTitle2: '你可以使用不同的 SDK 构建应用空间',
     owner: '所有者',
     name: '空间名称',
+    spaceEnName: '空间英文名称',
     namePlaceholder: '2-70个字母数字_.-的字符串，_.-不能并列出现',
     nickname: '空间别名',
     nicknamePlaceholder: '请输入别名',
@@ -73,7 +74,10 @@ export const application_spaces = {
     create: '创建应用空间',
     createSuccess: "应用空间创建成功",
     tip: "应用于应用空间路径，创建后不可更改",
-    failedFetchResources: "获取资源失败"
+    failedFetchResources: "获取资源失败",
+    license: "许可证",
+    createFail: "应用空间创建失败",
+    spaceEnName: "应用空间英文名称"
   },
   edit: {
     cloudResource: '空间云资源',

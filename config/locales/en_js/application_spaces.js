@@ -52,6 +52,7 @@ export const application_spaces = {
     subTitle2: 'You can use different SDKs to build app spaces',
     owner: 'Owner',
     name: 'Name',
+    spaceEnName: 'Space Name',
     namePlaceholder: '2-70 alphanumeric strings _.-, _.- cannot appear side by side',
     nickname: 'Nickname',
     nicknamePlaceholder: 'Please enter nickname',
@@ -73,7 +74,10 @@ export const application_spaces = {
     create: 'Create Space',
     createSuccess: "Application Space created successfully",
     tip: "This parameter applies to the application space path and cannot be changed after it is created",
-    failedFetchResources: "Failed to fetch resources"
+    failedFetchResources: "Failed to fetch resources",
+    license: "License",
+    createFail: "Application Space creation failed",
+    spaceEnName: "Application Space Name"
   },
   edit: {
     cloudResource: 'Cloud Resource',

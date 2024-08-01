@@ -28,9 +28,11 @@ export const endpoints = {
     publicDesc: "Anyone on the internet can see this endpoint.",
     private: "Private",
     privateDesc: "Only you (personal) or members of your organization can see this endpoint.",
-    createEndpoint: "Create Endpoint",
+    createEndpoint: "Create",
     createSuccess: "Endpoint created successfully",
-    dedicated: "Dedicated endpoint"
+    dedicated: "Dedicated endpoint",
+    tip: "Applied to the endpoint, cannot be changed after creation",
+    createFail: "Failed to create endpoint",
   },
   settings: {
     stop: "Stop",
@@ -44,6 +46,33 @@ export const endpoints = {
     delTips3: "the endpoint and all its files.",
     confirmDel: "I understand and confirm deletion",
     namespaceName: "Endpoint Name/ID",
-    toggleStatusSuccess: 'Updated, please wait Endpoint status change'
+    toggleStatusSuccess: 'Updated, please wait Endpoint status change',
+    statusText: "The current Endpoint is now",
+    status: "Status",
+    changeVisibility: "Change Endpoint visibility",
+    visibility: "Endpoint visibility",
+    privateVis: "Only creator or members of your organization can see",
+    publicVis: "Anyone can see this endpoint",
+    privateInfo: ", only the creator or organization admin can update",
+    publicInfo: ", visible to anyone on the internet.",
+    resource: "Resource configuration",
+    resourceTip: "You can switch to different cloud resources at any time. After switching to paid resources, you will be charged based on the length of use.",
+    framework: "Framework",
+    currentFramework: 'Current Framework',
+    maxReplica: "Maximum number of replicas",
+    minReplica: "Minimum number of replicas",
+    currentMaxReplica: "Current maximum number of replicas",
+    currentMinReplica: "Current minimum number of replicas",
+  },
+  playground: {
+    title: "Playground",
+    parameters: "Parameters",
+    generation: "Text Generation",
+    json: "JSON Output",
+    maximum: "Maximum",
+    send: "Send",
+    test: "Inference API",
+    api: "Send requests to endpoint",
+    useToken: 'Use my token'
   }
 }

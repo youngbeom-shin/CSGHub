@@ -23,6 +23,7 @@ export const all = {
   uploadFile: "上传文件",
   loadError: "加载数据报错",
   notSupportPreview: "暂不支持预览，请通过 git clone 下载",
+  syncNotSupportPreview: "暂不支持预览",
   changeVis: "修改可见性为",
   enterPls: "请输入",
   sureDel: "以确认删除",
@@ -42,6 +43,7 @@ export const all = {
   changeCancel: "操作取消",
   addSuccess: "添加成功",
   delSuccess: "删除成功",
+  updateSuccess: "更新成功",
   lastTime: "更新时间",
   downloadCount: "下载热度",
   public: "公开",
@@ -76,5 +78,11 @@ export const all = {
   deleteSuccess: "删除成功",
   commits: "提交历史",
   fetchError: "获取数据失败",
-  deploy: "部署"
+  deploy: "部署",
+  more:"更多",
+  baseModel:"基座模型",
+  moreDesc: "展开更多",
+  sdkTips: "请先注册，然后从 OpenCSG 的账号页面获取 Token",
+  public: "公开",
+  private: "私有",
 }
